@@ -11,14 +11,14 @@ bot.on('ready', function() {
 bot.on('guildMemberAdd', function (member) {
 	member.createDM().then(function (channel) 
   {
-    channel.send("Bienvenue dans le terrier des createurs, j'espère que tu te plaira, vas tchecker <#444518041867517962>")
+    channel.send("Bienvenue sur le serveur LTDN, amuse toi bien ^^ !")
   })
-	member.guild.channels.find('name', 'bienvenue').send("Message de bienvenue : Hey "+member+" et bienvenue sur LTDN Community, n’oublie pas le <#460891990960111646>")
+	member.guild.channels.find('name', 'bienvenue').send("Hey **"+member+"**\n et bienvenue sur LTDN Community,\n n’oublie pas le <#439093493378318336>")
 });
 bot.on('guildMemberRemove', function (member) {
 	member.createDM().then(function (channel) 
   {
-    channel.send("Au revoir dans le terrier des createurs, j'espère que tu t'ai plu !")
+    channel.send("Au revoir sur le serveur LTDN a bientôt ^^ !")
   })
 	member.guild.channels.find('name', 'bienvenue').send("Byebye "+member+" tu va nous manquer !")
 });
@@ -26,6 +26,7 @@ bot.on('message', async (message)=>{
 if (message.content === prefix + 'help') {
 	let help = new Discord.RichEmbed()
 	.setTitle('~HELP~')
+	.addField('-memberok', 'Sert à devenir un membre validé !')
 	.addField('-kick <pseudo> <raison>', 'Sert a kick une personne du serveur.')
 	.addField('-ban <pseudo> <raison>', 'Sert a bon définitivement une personne du serveur.')
 	.addField('-mute <pseudo>', 'Sert à mute une personne.')
@@ -35,31 +36,12 @@ if (message.content === prefix + 'help') {
 	.addField('Créé par DiMz :', 'https://discord.gg/CadY7bD')
 	message.channel.send(help)
 }
-});
-const events = {
-    MESSAGE_REACTION_ADD: 'messageReactionAdd',
-    MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
-};
-
-bot.on('raw', async event => {
-  if (!events.hasOwnProperty(event.t)) return;
-
-  const { d: data } = event;
-  const user = bot.users.get(data.user_id);
-  const channel = bot.channels.get(data.channel_id) || await user.createDM();
-
-  if (channel.messages.has(data.message_id)) return;
-
-  const message = await channel.fetchMessage(data.message_id);
-  const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
-  let reaction = message.reactions.get(emojiKey);
-
-  if (!reaction) {
-    const emoji = new Discord.Emoji(bot.guilds.get(data.guild_id), data.emoji);
-    reaction = new Discord.MessageReaction(message, emoji, 1, data.user_id === bot.user.id);
-  }
-
-  bot.emit(events[event.t], reaction, user);
+if (message.content === prefix + 'memberok') {
+	let role = message.guild.roles.find(r => r.name === "✅ Membre validé ✅")
+	if (message.member.roles.has(role.id)) return message.channel.send('Vous avez déjà le role !')
+	message.member.addRole(role.id)
+	message.channel.send('Vous êtes désormais un membre validé ! ✅ ')
+}
 });
 bot.on("message", async message => {
   if(message.author.bot) return;
@@ -204,64 +186,4 @@ module.exports.help = {
   name: "removerole"
 }
 });
-bot.on('messageReactionAdd', async (reaction, user)=>{
-  // GAME ZAKAYO !!
-  if (reaction.message.content.startsWith('[ROLEMENU]')) {
-    reaction.message.react('✅')
-    reaction.message.react('📎')
-    reaction.message.react('👨')
-    reaction.message.react('👩')
-    if (reaction.emoji.name === '✅') {
-      let role = reaction.message.guild.roles.find(`name`, `✅ Membre validé ✅`);
-      reaction.message.guild.members.get(user.id).addRole(role.id)
-      user.send('Vous avez reçu le role "Membre Validé" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else if (reaction.emoji.name === '📎') {
-      let role = reaction.message.guild.roles.find(`name`, `Pubeur comfirmé`);
-      reaction.message.guild.members.get(user.id).addRole(role.id)
-      user.send('Vous avez reçu le role "Pubeur comfirmé" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else if (reaction.emoji.name === '👨') {
-      let role = reaction.message.guild.roles.find(`name`, `Homme`);
-      reaction.message.guild.members.get(user.id).addRole(role.id)
-      user.send('Vous avez reçu le role "Homme" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else if (reaction.emoji.name === '👩') {
-      let role = reaction.message.guild.roles.find(`name`, `Femme`);
-      reaction.message.guild.members.get(user.id).addRole(role.id)
-      user.send('Vous avez reçu le role "Femme" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else {
-      reaction.remove(user)
-    }
-  }
-});
-bot.on('messageReactionRemove', async (reaction, user)=>{
-  // GAME ZAKAYO !!
-  if (reaction.message.content.startsWith('[ROLEMENU]')) {
-    if (reaction.emoji.name === '✅') {
-      let role = reaction.message.guild.roles.find(`name`, `✅ Membre validé ✅`);
-      reaction.message.guild.members.get(user.id).removeRole(role.id)
-      user.send('Vous avez reçu le role "Membre Validé" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else if (reaction.emoji.name === '📎') {
-      let role = reaction.message.guild.roles.find(`name`, `Pubeur comfirmé`);
-      reaction.message.guild.members.get(user.id).removeRole(role.id)
-      user.send('Vous avez reçu le role "Pubeur comfirmé" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else if (reaction.emoji.name === '👨') {
-      let role = reaction.message.guild.roles.find(`name`, `Homme`);
-      reaction.message.guild.members.get(user.id).removeRole(role.id)
-      user.send('Vous avez reçu le role "Homme" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else if (reaction.emoji.name === '👩') {
-      let role = reaction.message.guild.roles.find(`name`, `Femme`);
-      reaction.message.guild.members.get(user.id).removeRole(role.id)
-      user.send('Vous avez reçu le role "Femme" sur le serveur ' + reaction.message.guild.name + ' !')
-    }
-    else {
-      reaction.remove(user)
-    }
-  }
-});
-bot.login(process.env.TOKENd)
+bot.login(process.env.TOKEN)
