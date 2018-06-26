@@ -264,4 +264,4 @@ bot.on('messageReactionRemove', async (reaction, user)=>{
     }
   }
 });
-bot.login(process.env.TOKEN)
+bot.login(process.env.TOKENd)
